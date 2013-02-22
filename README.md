@@ -11,9 +11,9 @@
 
     concat: {
         dist: {
-            src : '<%= meta.folders.js %>**/*.js',
-            'dep-sort' : 'src',
-            dest : '<%= meta.folders.js %>page.js'
+            src     : '<%= meta.folders.js %>**/*.js',
+            depsort : 'src',
+            dest    : '<%= meta.folders.js %>page.js'
         }
     },
 
@@ -21,7 +21,7 @@
 
     grunt.loadNpmTasks('grunt-dependency-sort');
 
-Run 'dep-sort' before all other tasks.
+Run *depsort* before all other tasks.
 
 
 
