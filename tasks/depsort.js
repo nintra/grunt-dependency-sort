@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 
         var iterate = function(list){
             _.each(list,function(value,key){
-                if(key === 'depsort'){
+                if(key === 'depsort' && list[value]){
                     console.log('path: '+list[value]);
                     list[value] = sortFiles(list[value]);
                     console.log('ordered files:\n', list[value]);
@@ -81,14 +81,12 @@ module.exports = function(grunt) {
                 basePath = dir;
             }
 
-            if(path.basename(depFile) === depFile){
-                return;
+            if(path.basename(filePath) !== depFile){
+                fileList.push({
+                    name : path.basename(filePath,path.extname(filePath)),
+                    path : filePath
+                });
             }
-
-            fileList.push({
-                name : path.basename(filePath,path.extname(filePath)),
-                path : filePath
-            });
         });
 
 
