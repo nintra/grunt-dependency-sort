@@ -7,12 +7,7 @@
     "email": "liermann@strg-agency.de"
   },
 
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/documentcloud/underscore.git"
-  },
-
-  "main": "grunt-dependency-sort.js",
+  "main": "tasks/depsort.js",
   "version": "0.1.0",
 
   "dependencies"  : {

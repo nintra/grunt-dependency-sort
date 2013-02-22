@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 
         var iterate = function(list){
             _.each(list,function(value,key){
-                if(key === 'dep-sort'){
+                if(key === 'depsort'){
                     console.log('path: '+list[value]);
                     list[value] = sortFiles(list[value]);
                     console.log('ordered files:\n', list[value]);
