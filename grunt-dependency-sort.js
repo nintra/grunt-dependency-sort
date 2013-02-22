@@ -1,6 +1,6 @@
 /*!
  * grunt-dependency-sort
- * Copyright (c) 2013 by Oliver Liermann <oliver.liermann@gmail.com>
+ * Copyright (c) 2013 by Oliver Liermann <liermann@strg-agency.de>
  *
  * MIT LICENSE
  *
@@ -29,8 +29,9 @@
 
 module.exports = function(grunt) {
 
-    var path = require('path'),
-        _    = require('underscore');
+    var path     = require('path'),
+        _        = require('underscore'),
+        topoSort = require('topoSort');
 
     // iterate through grunt config and search for 'dep-sort' keys
     grunt.registerTask('dep-sort', '´dep-sort´ by _dependencies.json', function() {

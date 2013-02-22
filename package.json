@@ -14,5 +14,12 @@
 
   "main": "grunt-dependency-sort.js",
   "version": "0.1.0",
+
+  "dependencies"  : {
+        "grunt"                 : "~0.4.0",
+        "toposort"              : "~0.2.8",
+        "underscore"            : "~1.4.4"
+    },
+
   "readmeFilename": "README.md"
 }
