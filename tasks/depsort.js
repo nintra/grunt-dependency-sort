@@ -30,6 +30,7 @@
 module.exports = function(grunt) {
 
     var path     = require('path'),
+        fs       = require('fs'),
         _        = require('underscore'),
         topoSort = require('topoSort');
 
