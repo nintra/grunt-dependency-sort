@@ -21,6 +21,8 @@
 
     grunt.loadNpmTasks('grunt-dependency-sort');
 
+    grunt.registerTask('default', ['depsort','concat']);
+
 Run *depsort* before all other tasks.
 
 
