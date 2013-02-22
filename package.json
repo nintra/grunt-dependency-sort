@@ -1,6 +1,6 @@
 {
   "name": "grunt-dependency-sort",
-  "description": "Sort files defined ",
+  "description": "expand & sort a path by a JSON file",
 
   "author": {
     "name": "Oliver Liermann",
