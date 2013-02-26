@@ -24,7 +24,6 @@
  */
 
 
-//************replace reject
 'use strict';
 
 module.exports = function(grunt) {
@@ -37,21 +36,38 @@ module.exports = function(grunt) {
     // iterate through grunt config and search for 'dep-sort' keys
     grunt.registerTask('depsort', '´depsort´ by _dependencies.json', function() {
 
-        var iterate = function(list){
-            _.each(list,function(value,key){
-                if(key === 'depsort' && list[value]){
-                    console.log('path: '+list[value]);
-                    list[value] = sortFiles(list[value]);
-                    console.log('ordered files:\n', list[value]);
-                }
+        var keyLimit = arguments.length && _.values(arguments),
+            keyObj,
 
-                if(_.isObject(value)){
-                    iterate(value);
+            iterate = function(list){
+                _.each(list,function(value,key){
+                    if(key === 'depsort' && list[value.key]){
+                        list[value.key] = sortFiles(list[value.key],value.ext,value.cwd);
+
+                        grunt.log.oklns('ordered files:');
+                        console.log(list[value.key]);
+                    }
+
+                    if(_.isObject(value)){
+                        iterate(value);
+                    }
+                });
+            };
+
+
+        if(keyLimit){
+            keyObj = grunt.config.data;
+            _.each(keyLimit,function(key){
+                if(!keyObj[key]){
+                    grunt.fail.fatal('Could not resolve key! '+keyLimit.join('.'));
                 }
+                keyObj = keyObj[key];
             });
-        };
 
-        iterate(grunt.config.data);
+            iterate(keyObj);
+        }else{
+            iterate(grunt.config.data);
+        }
     });
 
 
@@ -59,31 +75,36 @@ module.exports = function(grunt) {
         @param directory {String} path/template string
         @return {Array} of resolved file paths
      */
-    function sortFiles(directory) {
+    function sortFiles(directory,extension,cwd) {
 
-        var files    = grunt.file.expand(grunt.template.process(directory)),
-            fileList = [],
+        var pDirectory  = grunt.template.process(_.isArray(directory) ? directory.join(',') : directory).split(','),
 
-            basePath = '',
-            depFile  = '_dependencies.json',
-            deps     = {},
+            files       = grunt.file.expand(pDirectory),
+            fileList    = [],
 
-            edges    = [],
-            order    = [];
+            basePath    = cwd ? grunt.template.process(cwd) : path.dirname(pDirectory[0]).replace('**',''),
+            depFile     = '_dependencies.json',
+            deps        = {},
 
+            edges       = [],
+            order       = [];
+
+        // set basePath
+        if(!cwd){
+            _.each(files,function(filePath){
+                var dir = path.dirname(filePath)+'/';
+
+                if(!basePath || basePath.length > dir.length){
+                    basePath = dir;
+                }
+            });
+        }
 
         // create list of filename : path
-        // set basePath
         _.each(files,function(filePath){
-            var dir = path.dirname(filePath)+'/';
-
-            if(!basePath || basePath.length > dir.length){
-                basePath = dir;
-            }
-
             if(path.basename(filePath) !== depFile){
                 fileList.push({
-                    name : path.basename(filePath,path.extname(filePath)),
+                    name : _.str.rtrim(filePath.replace(basePath,''),extension || path.extname(filePath)),
                     path : filePath
                 });
             }
@@ -105,8 +126,10 @@ module.exports = function(grunt) {
 
             // create array of sorted file paths
             files = _.map(order,function(value){
-                var path;
+                var path = false;
 
+
+//************replace reject
                 fileList = _.reject(fileList,function(item){
                     if(item.name === value){
                         path = item.path;
@@ -117,6 +140,7 @@ module.exports = function(grunt) {
 
                 return path;
             });
+            files = _.compact(files);
 
             // append files not mentioned in deps
             files = files.concat(_.pluck(fileList,'path'));

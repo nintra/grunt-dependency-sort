@@ -12,23 +12,21 @@
     concat: {
         dist: {
             src     : '<%= meta.folders.js %>**/*.js',
-            depsort : 'src',
+            depsort : { key: 'src', ext: '.js', cwd: '<%= meta.folders.js %>' },
             dest    : '<%= meta.folders.js %>page.js'
         }
-    },
+    }
 
     ...
 
     grunt.loadNpmTasks('grunt-dependency-sort');
 
-    grunt.registerTask('default', ['depsort','concat']);
-
-Run *depsort* before all other tasks.
+    grunt.registerTask('default', ['depsort:concat:dist','concat:dist']);
 
 
 
 
-Dependencies need to be defined in an _dependencies.json in base directory of current path.<br>(e.g. in <%= meta.folders.js %>)
+Dependencies need to be defined in an _dependencies.json in base directory of current path. ( cwd: '<%= meta.folders.js %>' )
 
     {
         "almond" : [
