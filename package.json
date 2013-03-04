@@ -8,7 +8,7 @@
   },
 
   "main": "tasks/depsort.js",
-  "version": "0.1.2",
+  "version": "0.1.3",
 
   "dependencies"  : {
         "grunt"                 : "~0.4.0",
