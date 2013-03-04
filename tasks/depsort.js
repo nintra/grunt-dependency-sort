@@ -81,6 +81,8 @@ module.exports = function(grunt) {
 
             files       = grunt.file.expand(pDirectory),
             fileList    = [],
+            prependList = [],
+            appendList  = [],
 
             basePath    = cwd ? grunt.template.process(cwd) : path.dirname(pDirectory[0]).replace('**',''),
             depFile     = '_dependencies.json',
@@ -114,11 +116,25 @@ module.exports = function(grunt) {
         deps = fs.existsSync(basePath+depFile) && grunt.file.readJSON(basePath+depFile);
         if(deps){
 
-            // load files defined in deps
-            Object.keys(deps).forEach(function(file){
-                edges.push([file].concat(deps[file]));
+            //update prepend / append
+            fileList = _.filter(fileList,function(item,key){
+                if(_.contains(deps.prepend,item.name)){
+                    prependList.push(item.path);
+                    return false;
+                }
+                if(_.contains(deps.append,item.name)){
+                    appendList.push(item.path);
+                    return false;
+                }
+                return true;
             });
 
+            // load files defined in deps
+            Object.keys(deps).forEach(function(file){
+                if(file != 'prepend' && file != 'append'){
+                    edges.push([file].concat(deps[file]));
+                }
+            });
 
             // sort by dependencies
             order = topoSort(edges);
@@ -128,8 +144,6 @@ module.exports = function(grunt) {
             files = _.map(order,function(value){
                 var path = false;
 
-
-//************replace reject
                 fileList = _.reject(fileList,function(item){
                     if(item.name === value){
                         path = item.path;
@@ -142,8 +156,14 @@ module.exports = function(grunt) {
             });
             files = _.compact(files);
 
+            // prepend files
+            files = prependList.concat(files);
+
             // append files not mentioned in deps
             files = files.concat(_.pluck(fileList,'path'));
+
+            // append files
+            files = files.concat(appendList);
         }else{
 
             grunt.log.writeln('no '+depFile+' file specified in '+basePath);
