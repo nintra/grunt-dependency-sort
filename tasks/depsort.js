@@ -31,7 +31,7 @@ module.exports = function(grunt) {
     var path     = require('path'),
         fs       = require('fs'),
         _        = require('underscore'),
-        topoSort = require('topoSort');
+        topoSort = require('toposort');
 
     // iterate through grunt config and search for 'dep-sort' keys
     grunt.registerTask('depsort', '´depsort´ by _dependencies.json', function() {
