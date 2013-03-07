@@ -118,16 +118,29 @@ module.exports = function(grunt) {
 
             //update prepend / append
             fileList = _.filter(fileList,function(item,key){
-                if(_.contains(deps.prepend,item.name)){
-                    prependList.push(item.path);
-                    return false;
+                var pIndex,aIndex;
+
+                if(deps.prepend){
+                    pIndex = deps.prepend.indexOf(item.name);
+                    if(pIndex > -1){
+                        prependList[pIndex] = item.path;
+                        return false;
+                    }
                 }
-                if(_.contains(deps.append,item.name)){
-                    appendList.push(item.path);
-                    return false;
+
+                if(deps.append){
+                    aIndex = deps.append.indexOf(item.name);
+                    if(aIndex > -1){
+                        appendList[aIndex] = item.path;
+                        return false;
+                    }
                 }
+
                 return true;
             });
+
+            prependList = _.compact(prependList);
+            appendList = _.compact(appendList);
 
             // load files defined in deps
             Object.keys(deps).forEach(function(file){
