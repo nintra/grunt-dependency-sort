@@ -28,10 +28,10 @@
 
 module.exports = function(grunt) {
 
-    var path     = require('path'),
-        fs       = require('fs'),
-        _        = require('underscore'),
-        topoSort = require('toposort');
+    var path      = require('path'),
+        fs        = require('fs'),
+        _         = grunt.util._,
+        topoSort  = require('toposort');
 
     // iterate through grunt config and search for 'dep-sort' keys
     grunt.registerTask('depsort', '´depsort´ by _dependencies.json', function() {
@@ -42,10 +42,13 @@ module.exports = function(grunt) {
             iterate = function(list){
                 _.each(list,function(value,key){
                     if(key === 'depsort' && list[value.key]){
+                        var basePath = value.cwd ? grunt.template.process(value.cwd) : '';
                         list[value.key] = sortFiles(list[value.key],value.ext,value.cwd);
 
-                        grunt.log.oklns('ordered files:');
-                        console.log(list[value.key]);
+                        grunt.log.oklns('ordered files ('+list[value.key].length+'):');
+                        _.each(list[value.key],function(path,file){
+                            console.log(path.replace(basePath,''));
+                        });
                     }
 
                     if(_.isObject(value)){
@@ -81,6 +84,7 @@ module.exports = function(grunt) {
 
             files       = grunt.file.expand(pDirectory),
             fileList    = [],
+            orderedList = [],
             prependList = [],
             appendList  = [],
 
@@ -145,7 +149,9 @@ module.exports = function(grunt) {
             // load files defined in deps
             Object.keys(deps).forEach(function(file){
                 if(file != 'prepend' && file != 'append'){
-                    edges.push([file].concat(deps[file]));
+                    _.each(deps[file],function(dep){
+                        edges.push([file,dep]);
+                    });
                 }
             });
 
@@ -153,36 +159,40 @@ module.exports = function(grunt) {
             order = topoSort(edges);
             order.reverse();
 
+
+
             // create array of sorted file paths
-            files = _.map(order,function(value){
-                var path = false;
+            orderedList = _.map(order,function(value){
+                var path  = false,i;
 
-                fileList = _.reject(fileList,function(item){
-                    if(item.name === value){
-                        path = item.path;
+                //filter already ordered files out
+                for(i=0;i<fileList.length;i++){
+                    if(grunt.file.isMatch({ /*matchBase: true, dot: true*/ },value,fileList[i].name)){
+
+                        path = fileList[i].path;
+                        fileList.splice(i,1);
+                        break;
                     }
-
-                    return item.name === value;
-                });
+                }
 
                 return path;
             });
-            files = _.compact(files);
+            orderedList = _.compact(orderedList);
 
             // prepend files
-            files = prependList.concat(files);
+            orderedList = prependList.concat(orderedList);
 
             // append files not mentioned in deps
-            files = files.concat(_.pluck(fileList,'path'));
+            orderedList = orderedList.concat(_.pluck(fileList,'path'));
 
             // append files
-            files = files.concat(appendList);
+            orderedList = orderedList.concat(appendList);
         }else{
 
             grunt.log.writeln('no '+depFile+' file specified in '+basePath);
         }
 
-        return files;
+        return orderedList;
     };
 
 };

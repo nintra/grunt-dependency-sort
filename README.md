@@ -7,6 +7,7 @@
 
 *grunt-dependency-sort* orders files in a path and replaces the minimatch path with an array of resolved file paths.
 
+
 ## Example
 
     concat: {
@@ -49,4 +50,5 @@ Dependencies need to be defined in an _dependencies.json in base directory of cu
 
 Not mentioned and required files are appended to the ordered list.
 
-prepend & append options are supported.
+- prepend & append options are supported
+- minimatch for denpendencies supported

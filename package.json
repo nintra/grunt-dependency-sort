@@ -3,17 +3,16 @@
   "description": "expand & sort a path by a JSON file",
 
   "author": {
-    "name": "Oliver Liermann",
+    "name" : "Oliver Liermann",
     "email": "liermann@strg-agency.de"
   },
 
   "main": "tasks/depsort.js",
-  "version": "0.1.4",
+  "version": "0.1.5",
 
-  "dependencies"  : {
-        "grunt"                 : "~0.4.0",
-        "toposort"              : "~0.2.8",
-        "underscore"            : "~1.4.4"
+  "dependencies": {
+        "grunt"   : "~0.4.0",
+        "toposort": "~0.2.9"
     },
 
   "readmeFilename": "README.md"
