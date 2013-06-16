@@ -106,11 +106,31 @@ module.exports = function(grunt) {
             });
         }
 
+        // sort extensions
+        if(_.isArray(extension)){
+            extension.sort(function(a,b){
+                return a.length < b.length;
+            });
+        }else{
+            extension = [extension || path.extname(filePath)];
+        }
+
+
         // create list of filename : path
         _.each(files,function(filePath){
+            var name = filePath;
+
             if(path.basename(filePath) !== depFile){
+
+                _.some(extension,function(ext){
+                    if(_.str.endsWith(name,ext)){
+                        name = _.str.strLeftBack(name,ext);
+                        return true;
+                    }
+                });
+
                 fileList.push({
-                    name : _.str.rtrim(filePath.replace(basePath,''),extension || path.extname(filePath)),
+                    name : name.replace(basePath,''),
                     path : filePath
                 });
             }
@@ -160,22 +180,24 @@ module.exports = function(grunt) {
             order.reverse();
 
 
-
             // create array of sorted file paths
-            orderedList = _.map(order,function(value){
-                var path  = false,i;
+            _.each(order,function(value){
+                var found = false;
 
                 //filter already ordered files out
-                for(i=0;i<fileList.length;i++){
-                    if(grunt.file.isMatch({ /*matchBase: true, dot: true*/ },value,fileList[i].name)){
-
-                        path = fileList[i].path;
-                        fileList.splice(i,1);
-                        break;
+                fileList = _.reject(fileList,function(file,i){
+                    //console.log(value+' '+file.name);
+                    if(grunt.file.isMatch({ /*matchBase: true, dot: true*/ },value,file.name)){
+                        //console.log('--->out');
+                        orderedList.push(file.path);
+                        found = true;
+                        return true;
                     }
-                }
+                });
 
-                return path;
+                if(!found){
+                    grunt.log.warn('no file match: '+value);
+                }
             });
             orderedList = _.compact(orderedList);
 
