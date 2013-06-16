@@ -51,4 +51,4 @@ Dependencies need to be defined in an _dependencies.json in base directory of cu
 Not mentioned and required files are appended to the ordered list.
 
 - prepend & append options are supported
-- minimatch for denpendencies supported
+- minimatch for dependencies supported
