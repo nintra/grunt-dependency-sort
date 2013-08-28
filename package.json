@@ -15,5 +15,10 @@
         "toposort": "~0.2.9"
     },
 
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+
+  "repository": {
+        "type": "git",
+        "url" : "https://github.com/OLee86/grunt-dependency-sort.git"
+  },
 }
